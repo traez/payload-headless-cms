@@ -5,15 +5,15 @@ import { Media } from '@/payload-types'
 import Link from 'next/link'
 
 type PropsTodos = {
-  params: Promise<{ id: string }> | { id: string }
+  params: { id: string }
 }
 
 const pageTodoId = async ({ params }: PropsTodos) => {
+  const awaitedParams = await Promise.resolve(params)
+  const todoId = awaitedParams.id
+
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
-
-  const resolvedParams = await params // Ensure params is resolved
-  const todoId = resolvedParams.id
 
   const todo = await payload.findByID({
     collection: 'todos',
