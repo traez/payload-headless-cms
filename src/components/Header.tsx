@@ -12,18 +12,18 @@ export default function Header() {
         </Link>
       </menu>
       <aside className="flex justify-center items-center gap-2 md:gap-4">
-        <Link
-          href="/dashboard"
+        {/* <Link
+          href="/todos/1"
           className="text-base font-semibold border-2 border-blue-900 px-2 py-1 rounded-md hover:bg-yellow-300 transition duration-300"
         >
-          Dashboard
-        </Link>
+          Todos
+        </Link> */}
 
         <Link
-          href="/trae"
+          href="/create"
           className="text-base font-semibold border-2 border-blue-900 px-2 py-1 rounded-md hover:bg-yellow-300 transition duration-300"
         >
-          Trae
+          Create
         </Link>
 
         <Link
