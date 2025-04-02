@@ -4,9 +4,6 @@ import { getPayload } from 'payload'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 
-/* 
-Rest API will be used to add file upload functionality
-*/
 export async function createTodo(formData: FormData): Promise<void> {
   const title = formData.get('title') as string
   const description = formData.get('description') as string
@@ -15,34 +12,42 @@ export async function createTodo(formData: FormData): Promise<void> {
 
   const payload = await getPayload({ config: payloadConfig })
 
-  const mediaFormData = new FormData()
-  mediaFormData.append('file', media)
-  mediaFormData.append(
-    '_payload',
-    JSON.stringify({
-      alt: 'ALT: ' + title,
-    }),
-  )
+  let mediaId = null
 
-  const mediaResponse = await fetch(`${process.env.NEXT_PUBLIC_PAYLOAD_URL}/api/media`, {
-    method: 'POST',
-    body: mediaFormData,
-  })
+  // Only process media if a file was actually selected
+  if (media && media.size > 0) {
+    const mediaFormData = new FormData()
+    mediaFormData.append('file', media)
+    mediaFormData.append(
+      '_payload',
+      JSON.stringify({
+        alt: 'ALT: ' + title,
+      }),
+    )
 
-  const mediaData = await mediaResponse.json()
+    try {
+      const mediaResponse = await fetch(`${process.env.NEXT_PUBLIC_PAYLOAD_URL}/api/media`, {
+        method: 'POST',
+        body: mediaFormData,
+      })
 
-  if (!mediaData?.doc?.id) {
-    throw new Error('Failed to upload media')
+      const mediaData = await mediaResponse.json()
+      if (mediaData?.doc?.id) {
+        mediaId = mediaData.doc.id
+      }
+    } catch (error) {
+      console.error('Media upload failed:', error)
+      // Continue without media if upload fails
+    }
   }
-  const mediaId = mediaData.doc.id
 
-  const todo = await payload.create({
+  await payload.create({
     collection: 'todos',
     data: {
-      title: title as string,
-      description: description as string,
-      completed: completed as boolean,
-      media: mediaId,
+      title,
+      description,
+      completed,
+      media: mediaId, // This will be null if no media was uploaded
     },
   })
 

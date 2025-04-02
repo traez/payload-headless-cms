@@ -19,7 +19,12 @@ export default async function HomePage() {
   return (
     <section className="min-w-[320px] max-w-[1400px] mx-auto px-4 py-8 bg-white dark:bg-gray-800 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
-        Payload To Do List {user?.email && <span className="text-blue-500">({user.email})</span>}
+        Payload To Do List
+        {user?.email ? (
+          <span className="text-blue-500"> ({user.email})</span>
+        ) : (
+          <span className="text-gray-500"> (Not logged in)</span>
+        )}
       </h2>
       <article className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {todos.docs.map((todo) => (

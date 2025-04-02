@@ -1,12 +1,13 @@
 'use client'
 import { createTodo } from '@/lib/actions'
 import Link from 'next/link'
-import { useState, ChangeEvent } from 'react'
+import { useState, ChangeEvent, useTransition } from 'react'
 
 export default function CreateForm() {
   const [fileError, setFileError] = useState('')
   const [fileName, setFileName] = useState('')
   const [isFileValid, setIsFileValid] = useState(true)
+  const [isPending, startTransition] = useTransition()
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -27,8 +28,16 @@ export default function CreateForm() {
     }
   }
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    startTransition(async () => {
+      await createTodo(formData)
+    })
+  }
+
   return (
-    <form action={createTodo}>
+    <form onSubmit={handleSubmit}>
       {/* Title Field */}
       <div className="flex flex-col gap-2.5 mb-4">
         <label htmlFor="title" className="font-medium">
@@ -98,12 +107,15 @@ export default function CreateForm() {
       <div className="flex flex-col sm:flex-row gap-3 mt-6">
         <button
           type="submit"
-          disabled={!isFileValid}
+          disabled={!isFileValid || isPending}
           className={`flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 hover:shadow-md transition-all duration-200 border border-primary-dark ${
-            !isFileValid ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
+            !isFileValid || isPending ? 'opacity-50 cursor-not-allowed' : ''
+          } flex items-center justify-center gap-2`}
         >
-          Create
+          {isPending && (
+            <span className="animate-spin inline-block w-5 h-5 border-[3px] border-current border-t-transparent text-white rounded-full"></span>
+          )}
+          {isPending ? 'Creating...' : 'Create'}
         </button>
         <Link
           href="/"
