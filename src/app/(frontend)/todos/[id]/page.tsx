@@ -4,23 +4,18 @@ import Image from 'next/image'
 import { Media } from '@/payload-types'
 import Link from 'next/link'
 
-type PropsTodos = {
-  params: { id: string }
-}
-
-const pageTodoId = async ({ params }: PropsTodos) => {
-  const awaitedParams = await Promise.resolve(params)
-  const todoId = awaitedParams.id
+export default async function pageTodoId({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
 
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
 
   const todo = await payload.findByID({
     collection: 'todos',
-    id: todoId,
+    id: id,
   })
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_PAYLOAD_URL}/api/todos/${todoId}`)
+  const response = await fetch(`${process.env.NEXT_PUBLIC_PAYLOAD_URL}/api/todos/${id}`)
   const todoREST = await response.json()
   console.log(todoREST)
 
@@ -84,4 +79,3 @@ const pageTodoId = async ({ params }: PropsTodos) => {
   )
 }
 
-export default pageTodoId

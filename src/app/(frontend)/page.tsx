@@ -2,7 +2,6 @@ import { headers as getHeaders } from 'next/headers.js'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getPayload } from 'payload'
-//import { fileURLToPath } from 'url'
 import config from '@/payload.config'
 import { Media } from '@/payload-types'
 
@@ -11,8 +10,6 @@ export default async function HomePage() {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
   const { user } = await payload.auth({ headers })
-
-  //const fileURL = `vscode://file/${fileURLToPath(import.meta.url)}`
 
   const todos = await payload.find({
     collection: 'todos',
