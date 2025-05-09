@@ -21,6 +21,7 @@
     "@payloadcms/payload-cloud": "latest",
     "@payloadcms/plugin-form-builder": "^3.31.0",
     "@payloadcms/richtext-lexical": "latest",
+    "@payloadcms/storage-vercel-blob": "^3.37.0",
     "@tailwindcss/postcss": "^4.0.17",
     "cross-env": "^7.0.3",
     "graphql": "^16.8.1",
